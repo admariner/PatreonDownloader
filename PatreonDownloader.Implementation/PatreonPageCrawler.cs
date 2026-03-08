@@ -32,7 +32,7 @@ namespace PatreonDownloader.Implementation
         //TODO: Research possibility of not hardcoding this string
         private const string CrawlStartUrl = "https://www.patreon.com/api/posts?" +
                                              "include=user%2Cattachments_media%2Ccampaign%2Cpoll.choices%2Cpoll.current_user_responses.user%2Cpoll.current_user_responses.choice%2Cpoll.current_user_responses.poll%2Caccess_rules.tier.null%2Cimages.null%2Caudio.null" +
-                                             "&fields[post]=change_visibility_at%2Ccomment_count%2Ccontent%2Ccurrent_user_can_delete%2Ccurrent_user_can_view%2Ccurrent_user_has_liked%2Cembed%2Cimage%2Cis_paid%2Clike_count%2Cmin_cents_pledged_to_view%2Cpost_file%2Cpost_metadata%2Cpublished_at%2Cpatron_count%2Cpatreon_url%2Cpost_type%2Cpledge_url%2Cthumbnail_url%2Cteaser_text%2Ctitle%2Cupgrade_url%2Curl%2Cwas_posted_by_campaign_owner" +
+                                             "&fields[post]=change_visibility_at%2Ccomment_count%2Ccontent%2Ccurrent_user_can_delete%2Ccurrent_user_can_view%2Ccurrent_user_has_liked%2Cembed%2Cimage%2Cis_paid%2Clike_count%2Cmin_cents_pledged_to_view%2Cpost_file%2Cpost_metadata%2Cpublished_at%2Cpatron_count%2Cpatreon_url%2Cpost_type%2Cpledge_url%2Cthumbnail_url%2Cteaser_text%2Ctitle%2Cupgrade_url%2Curl%2Cwas_posted_by_campaign_owner%2Ccontent_json_string" +
                                              "&fields[user]=image_url%2Cfull_name%2Curl" +
                                              "&fields[campaign]=show_audio_post_download_links%2Cavatar_photo_url%2Cearnings_visibility%2Cis_nsfw%2Cis_monthly%2Cname%2Curl" +
                                              "&fields[access_rule]=access_rule_type%2Camount_cents" +
@@ -162,12 +162,12 @@ namespace PatreonDownloader.Implementation
                 {
                     try
                     {
-                        string filename = "description.html";
+                        string filename = "description.json";
                         if (!_patreonDownloaderSettings.IsUseSubDirectories)
                             filename = $"{jsonEntry.Id}_{filename}";
 
                         await File.WriteAllTextAsync(Path.Combine(additionalFilesSaveDirectory, filename),
-                            jsonEntry.Attributes.Content);
+                            jsonEntry.Attributes.ContentJsonString);
                     }
                     catch (Exception ex)
                     {
@@ -212,7 +212,8 @@ namespace PatreonDownloader.Implementation
                 }
 
                 //External urls via plugins (including direct via default plugin)
-                List<string> pluginUrls = await _pluginManager.ExtractSupportedUrls(jsonEntry.Attributes.Content);
+                //2026-03-08: disabled due to patreon getting rid of html contentn data replacing it with JSON. Current implementation expects pure HTML.
+                /*List<string> pluginUrls = await _pluginManager.ExtractSupportedUrls(jsonEntry.Attributes.ContentJsonString);
                 foreach (string url in pluginUrls)
                 {
                     PatreonCrawledUrl subEntry = (PatreonCrawledUrl)entry.Clone();
@@ -221,7 +222,7 @@ namespace PatreonDownloader.Implementation
                     crawledUrls.Add(subEntry);
                     _logger.Info($"[{jsonEntry.Id}] New external entry: {subEntry.Url}");
                     OnNewCrawledUrl(new NewCrawledUrlEventArgs((CrawledUrl)subEntry.Clone()));
-                }
+                }*/
 
                 _logger.Debug($"[{jsonEntry.Id}] Scanning attachment data");
                 //Attachments

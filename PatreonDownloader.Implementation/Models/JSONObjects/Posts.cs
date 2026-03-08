@@ -70,8 +70,8 @@ namespace PatreonDownloader.Implementation.Models.JSONObjects.Posts
         public object ChangeVisibilityAt { get; set; }
         [JsonProperty("comment_count")]
         public int? CommentCount { get; set; }
-        [JsonProperty("content")]
-        public string Content { get; set; }
+        [JsonProperty("content_json_string")]
+        public string ContentJsonString { get; set; }
         [JsonProperty("current_user_can_delete")]
         public bool CurrentUserCanDelete { get; set; }
         [JsonProperty("current_user_can_view")]
